@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+        function getQuestions() {
+            var xhttp = new XMLHttpRequest();
+            var question = '';
+            var difficulty = document.getElementById("difficulty").value;
+            var topic = document.getElementById("topic").value;
+            var keywords = document.getElementById("keywords").value;
+            if (difficulty == '' && topic == '' && keywords == '')
+                return;
+            var params = 'difficulty=' + difficulty + '&topic=' + topic + '&keywords=' + keywords;
+
+            xhttp.open("POST", "https://web.njit.edu/~aes38/getQ.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send(params);
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var obj = JSON.parse(this.responseText);
+                    for (var i in obj.questions) {
+                        question += '<tr class="row">';
+                        question += '<td>' + obj.questions[i].question + '</td>';
+                        question += '<td><button class="question" onclick="addQuestion(' + i + ')">Add</button></td>';
+                        question += '</tr>';
+                    }
+
+                    document.getElementById('t01').innerHTML = question;
+                }
+            };
+        }
+        function showAllQ() {
+            var question = '';
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/getQ.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var obj = JSON.parse(this.responseText);
+                    var count = 1;
+                    for (var i in obj.questions) {
+                        question += '<tr class="row">';
+                        question += '<td>' + obj.questions[i].question + '</td>';
+                        question += '<td><button class="question" onclick="addQuestion(' + i + ')">Add</button></td>';
+                        question += '</tr>';
+                    }
+                    document.getElementById('t01').innerHTML = question;
+                }
+            };
+        }
+
+        function addQuestion(x) {
+            var question = document.getElementById('t01').rows[x].cells[0].innerHTML;
+            var row = '<tr>';
+            row += '<td style="width: 80%;">' + question + '</td>';
+            row += '<td style="width: 20%;"><input type="number" id="p' + x + '"></td>';
+            row += '</tr>';
+            document.getElementById('t02').innerHTML += row;
+        }
+
+        function deleteTest() {
+            document.getElementById('t02').innerHTML = '';
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/deleteTest.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+        }
+        function sending(params) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/submitTest.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send(params);
+        }
+        function submitTest() {
+            var test = '';
+            var table = document.getElementById("t02");
+            var rows = table.getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; i++) {
+                test = '';
+                if (rows[i].getElementsByTagName("td").length > 0) {
+                    test += 'question=' + encodeURIComponent(document.getElementById('t02').rows[i].cells[0].innerHTML);
+                    test += '&points=' + document.getElementById('t02').rows[i].cells[1].childNodes[0].value;
+                    sending(test);
+                }
+            }
+            document.getElementById('testSubmitted').innerHTML = 'Test is submitted';
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2b4f9cd5;
+        }
+        li {
+            float: left;
+        }
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        li a:hover:not(.active) {
+            background-color: rgb(78, 84, 87);
+        }
+        .active {
+            background-color: rgb(78, 84, 87);
+        }
+    </style>
+    <style>
+        .sidenav {
+            width: 130px;
+            z-index: 1;
+            top: 20px;
+            left: 10px;
+            background: rgb(78, 84, 87);
+            overflow-x: hidden;
+            padding: 8px 0;
+        }
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+        .sidenav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <style>
+        #container{
+            display: flex;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px; 
+        }
+        #left{
+            flex: 0 0 50%;
+        }
+        #right{
+            flex: 1;
+        } 
+        #right input[type=text] {
+            width: 15%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #right select {
+            width: 15%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+    <style>
+        table {
+            width: 100%;
+            border: 0.5px solid black;
+            border-collapse: collapse;
+            padding: 15px;  
+        }
+        th {
+            background-color: #2b4f9cd5;
+            color: white;
+            text-align: left;
+            border: 0.5px solid black;
+            border-collapse: collapse;
+            padding: 15px;  
+        }
+        td {
+            color: black;
+            padding: 15px;
+            text-align: left;
+        }
+        #t02 td{
+            color: black;
+            padding: 15px;
+            text-align: left;
+            border: 0.5px solid black;
+            border-collapse: collapse;
+        }
+        table tr:nth-child(even) {
+            background-color: #eee;
+        }
+        table tr:nth-child(odd) {
+            background-color: #fff;
+        }
+        input[type=number]{
+            width: 40px;
+        } 
+    </style>
+    <style>
+        div button {
+            background-color: #2b4f9cd5; 
+            border: none;
+            color: white;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: rgb(78, 84, 87);
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="https://web.njit.edu/~aes38/teacher/home.html">Home</a></li>
+        <li><a href="#createTest">Tests</a></li>
+        <li><a href="https://web.njit.edu/~aes38/teacher/grading.html">Grading</a></li>
+        <li style="float:right"><a class="active" href="https://web.njit.edu/~aes38/index.html">Logout</a></li>
+    </ul>
+    <div class="sidenav">
+        <a href="#course">CS 100</a>
+        <a href="https://web.njit.edu/~aes38/teacher/createQuestions.html">Create questions</a>
+        <a href="#currentTest">Create test</a>
+    </div>
+    <div id="container">
+        <div id="left">
+            <h3>Current test questions</h3>
+            <button onclick="submitTest()">Submit test</button>
+            <button onclick="deleteTest()">Delete test</button>
+            <p id="testSubmitted"></p>
+            <table id="header">
+                <tr>
+                    <th style="width: 80%;">Question</th>
+                    <th style="width: 20%;">Assigned points</th>
+                </tr>
+            </table>
+            <table id="t02"></table>
+        </div>
+        <div id="right">
+            <h3>Question list</h3>
+            <label>Difficulty:</label>
+            <select id="difficulty">
+                <option></option>
+                <option>easy</option>
+                <option>medium</option>
+                <option>hard</option>
+            </select>
+            <label>Topics:</label>
+            <select id="topic">
+                <option></option>
+                <option>variables</option>
+                <option>strings</option>
+                <option>operators</option>
+                <option>lists</option>
+                <option>tuples</option>
+                <option>sets</option>
+                <option>dictionaries</option>
+                <option>if else</option>
+                <option>while loops</option>
+                <option>for loops</option>
+                <option>functions</option>
+                <option>arrays</option>
+                <option>iterators</option>
+                <option>classes and objects</option>
+            </select>
+            <label>Keywords:</label>
+            <input type="text" id="keywords">
+            <button onclick="getQuestions()">Search</button>
+            <button onclick="showAllQ()">Show all questions</button>
+            <p id="demo"></p>
+            <table id="t01"></table>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2b4f9cd5;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: rgb(78, 84, 87);
+        }
+
+        .active {
+            background-color: rgb(78, 84, 87);
+        }
+    </style>
+    <style>
+        .sidenav {
+            width: 130px;
+            z-index: 1;
+            top: 20px;
+            left: 10px;
+            background: rgb(78, 84, 87);
+            overflow-x: hidden;
+            padding: 8px 0;
+        }
+
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .sidenav a:hover {
+            text-decoration: underline;
+        }
+
+        .main {
+            margin-left: 140px;
+            /* Same width as the sidebar + left position in px */
+            font-size: 28px;
+            /* Increased text to enable scrolling */
+            padding: 0px 10px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="https://web.njit.edu/~aes38/teacher/home.html">Home</a></li>
+        <li><a href="#createTest">Tests</a></li>
+        <li><a href="https://web.njit.edu/~aes38/teacher/grading.html">Grading</a></li>
+        <li style="float:right"><a class="active" href="https://web.njit.edu/~aes38/index.html">Logout</a></li>
+    </ul>
+    <div class="sidenav">
+        <a href="#course">CS 100</a>
+        <a href="https://web.njit.edu/~aes38/teacher/createQuestions.html">Create questions</a>
+        <a href="https://web.njit.edu/~aes38/teacher/currentTest.html">Create test</a>
+    </div>
+    <div class="main">
+        <p style="text-align:center">Coding is fun</p>
+    </div>
+
+</body>
+
+</html>

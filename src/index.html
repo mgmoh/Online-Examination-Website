@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <script src="postLogin.js"></script>
+    <style> 
+        body{
+              background: url(background.jpg) no-repeat center center fixed; 
+              -webkit-background-size: cover;
+              -moz-background-size: cover;
+              -o-background-size: cover;
+              background-size: cover;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+            .loginbox{
+                border:#080808d5;
+                border-radius: 1%;
+                width: 320px;
+                height: 410px;
+                background: rgb(255, 255, 255);
+                color: rgb(0, 0, 0);
+                top: 50%;
+                left: 50%;
+                position: absolute;
+                transform: translate(-50%, -50%);
+                box-sizing: border-box;
+                padding: 70px 30px; 
+            }
+            .avatar{
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                position: absolute;
+                top: -50px;
+                left: calc(50% - 50px);
+            }
+            h1{
+                margin: 0;
+                padding: 0 0 20px;
+                text-align: center;
+                font-size: 30px;
+            }
+            .loginbox p{
+                margin: 0;
+                padding: 0;
+                font-weight: bold;
+            }
+            .loginbox input{
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .loginbox input[type="text"], input[type="password"]{
+                border: none;
+                border-bottom: 1px solid rgb(0, 0, 0);
+                background: transparent;
+                outline: none;
+                height: 40px;
+                color: rgb(0, 0, 0);
+                font-size: 16px;
+            }
+            .loginbox input[type="button"]{
+                border: none;
+                outline: none;
+                height: 40px;
+                background: #2b4f9cd5;
+                color: #fff;
+                font-size: 18px;
+                border-radius: 20px;
+            }
+            .loginbox input[type="button"]:hover{
+                cursor: pointer;
+                background: #4681da;
+                color: rgb(255, 255, 255);
+            }
+            .loginbox a{
+                text-align: center;
+                font-size: 13px;
+                color: black;
+                
+            }
+
+        </style>
+</head>
+
+<body>
+    <div class="loginbox">
+        <img src="avatar.png" alt="Avatar" class="avatar">
+        <h1>Login</h1>
+        <form>
+            <p>UCID:</p>
+            <input type="text" id="username" placeholder="Enter Username">
+            <p>Password:</p>
+            <input type="password" id="password" placeholder="Enter Password">
+            <input type="button" value="Login" onclick="post()">
+            <a id="DBresponse"></a>
+        </form>
+    </div>
+</body>
+
+</html>

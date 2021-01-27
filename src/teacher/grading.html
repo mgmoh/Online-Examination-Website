@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+        function displayGrades() {
+            var grade = '';
+            var deductedPoints = 0;
+            var newTotalPoints = 0;
+            var testCasePoints = 0;
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/getGrades.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var obj = JSON.parse(this.responseText);
+                    for (var i in obj.answers) {
+                        grade += '<tr>';
+                        grade += '<td style="width: 20%">' + obj.answers[i].question + '</td>';
+                        grade += '<td style="width: 5%">' + obj.answers[i].maxpoints + '</td>';
+                        grade += '<td style="width: 15%">' + obj.answers[i].answer + '</td>';
+                        grade += '<td style="width: 5%">' + '<input type="number" id="grade' + i + '" value="' + obj.answers[i].grade + '"></td>';
+                        grade += '<td>';
+                        if (obj.answers[i].name != 0) {
+                            grade += 'Function name: -' + obj.answers[i].name;
+                            deductedPoints += obj.answers[i].name;
+                        }
+                        if (obj.answers[i].constraint != 0) {
+                            grade += '<br>Constraint: -' + obj.answers[i].constraint;
+                            deductedPoints += obj.answers[i].constraint;
+                        }
+                        if (obj.answers[i].print != 0) {
+                            grade += '<br>Print or return: -' + obj.answers[i].print;
+                            deductedPoints += obj.answers[i].print;
+                        }
+                        if (obj.answers[i].colon != 0) {
+                            grade += '<br>Missing colon: -' + obj.answers[i].colon;
+                            deductedPoints += obj.answers[i].colon;
+                        } 
+                        if (obj.answers[i].print == 0 && obj.answers[i].name == 0 && obj.answers[i].constraint == 0 && obj.answers[i].colon == 0) {
+                            grade += 'No extraneous points were removed';
+                        }
+                        grade += '</td>';
+
+                        grade += '<td>';
+                        var counter = 1;
+                        for (; ;) {
+                            if (obj.answers[i].testcase1 != '') {
+                                grade += 'Test case ' + counter + ':' + '<br>';
+                                grade += '-input: ' + obj.answers[i].testcase1 + '<br>';
+                                grade += '-expected output: ' + obj.answers[i].expected1 + '<br><br>';
+                            } else {
+                                break;
+                            }
+                            counter++;
+                            if (obj.answers[i].testcase2 != '') {
+                                grade += 'Test case ' + counter + ':' + '<br>';
+                                grade += '-input: ' + obj.answers[i].testcase2 + '<br>';
+                                grade += '-expected output: ' + obj.answers[i].expected2 + '<br><br>';
+                            } else {
+                                break;
+                            }
+                            counter++;
+                            if (obj.answers[i].testcase3 != '') {
+                                grade += 'Test case ' + counter + ':' + '<br>';
+                                grade += '-input: ' + obj.answers[i].testcase3 + '<br>';
+                                grade += '-expected output: ' + obj.answers[i].expected3 + '<br><br>';
+                            } else {
+                                break;
+                            }
+                            counter++;
+                            if (obj.answers[i].testcase4 != '') {
+                                grade += 'Test case ' + counter + ':' + '<br>';
+                                grade += '-input: ' + obj.answers[i].testcase4 + '<br>';
+                                grade += '-expected output: ' + obj.answers[i].expected4 + '<br><br>';
+                            } else {
+                                break;
+                            }
+                            counter++;
+                            if (obj.answers[i].testcase5 != '') {
+                                grade += 'Test case ' + counter + ':' + '<br>';
+                                grade += '-input: ' + obj.answers[i].testcase5 + '<br>';
+                                grade += '-expected output: ' + obj.answers[i].expected5 + '<br><br>';
+                            } else {
+                                break;
+                            }
+                            counter++;
+                            if (obj.answers[i].testcase6 != '') {
+                                grade += 'Test case ' + counter + ':' + '<br>';
+                                grade += '-input: ' + obj.answers[i].testcase6 + '<br>';
+                                grade += '-expected output: ' + obj.answers[i].expected6;
+                            }
+                            break;
+
+                        }
+                        grade += '</td>';
+
+                        newTotalPoints = obj.answers[i].maxpoints - deductedPoints;
+                        testCasePoints = Math.round(100*(newTotalPoints/(counter-1)))/100;
+
+                        grade += '<td>';
+                        var count = 1;
+                        for (; ;) {
+                            if (obj.answers[i].result1 == '1') {
+                                grade += 'Test case ' + count + ':' + ' passed (+' + testCasePoints + ')<br>';
+                            } else if (obj.answers[i].result1 == '0') {
+                                grade += 'Test case ' + count + ':' + ' failed(-' + testCasePoints + ')<br>';
+                                break;
+                            }
+                            count++;
+                            if (obj.answers[i].result2 == '1') {
+                                grade += 'Test case ' + count + ':' + ' passed(+' + testCasePoints + ')<br>';
+                            } else if (obj.answers[i].result2 == '0') {
+                                grade += 'Test case ' + count + ':' + ' failed(-' + testCasePoints + ')<br>';
+                            } else {
+                                break;
+                            }
+                            count++;
+                            if (obj.answers[i].result3 == '1') {
+                                grade += 'Test case ' + count + ':' + ' passed(+' + testCasePoints + ')<br>';
+                            } else if (obj.answers[i].result3 == '0') {
+                                grade += 'Test case ' + count + ':' + ' failed(-' + testCasePoints + ')<br>';
+                            } else {
+                                break;
+                            }
+                            count++;
+                            if (obj.answers[i].result4 == '1') {
+                                grade += 'Test case ' + count + ':' + ' passed(+' + testCasePoints + ')<br>';
+                            } else if (obj.answers[i].result4 == '0') {
+                                grade += 'Test case ' + count + ':' + ' failed(-' + testCasePoints + ')<br>';
+                            } else {
+                                break;
+                            }
+                            count++;
+                            if (obj.answers[i].result5 == '1') {
+                                grade += 'Test case ' + count + ':' + ' passed(+' + testCasePoints + ')<br>';
+                            } else if (obj.answers[i].result5 == '0') {
+                                grade += 'Test case ' + count + ':' + ' failed(-' + testCasePoints + ')<br>';
+                            } else {
+                                break;
+                            }
+                            count++;
+                            if (obj.answers[i].result6 == '1') {
+                                grade += 'Test case ' + count + ':' + ' passed(+' + testCasePoints + ')<br>';
+                            } else if (obj.answers[i].result6 == '0') {
+                                grade += 'Test case ' + count + ':' + ' failed(-' + testCasePoints + ')<br>';
+                            }
+                            break;
+                        }
+                        grade += '</td>';
+                        grade += '<td><textarea id="comment' + i + '" rows="4" cols="40"></textarea></td>';
+                        grade += '</tr>';
+                        deductedPoints = 0;
+                        newTotalPoints = 0;
+                        testCasePoints = 0;
+                    }
+                    document.getElementById('answers').innerHTML += grade;
+                    document.getElementById('postGrade').innerHTML += '<button onclick="postGrades();graded();">Finalize grades</button>';
+                    document.getElementById("viewGrades").disabled = true;
+                }
+            };
+        }
+        function sending(params) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/createGrades.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send(params);
+        }
+
+        function postGrades() {
+            var finalGrades = '';
+            var table = document.getElementById("answers");
+            var rows = table.getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; i++) {
+                finalGrades = '';
+                if (rows[i].getElementsByTagName("td").length > 0) {
+                    finalGrades += 'question=' + encodeURIComponent(document.getElementById('answers').rows[i].cells[0].innerHTML);
+                    finalGrades += '&comments=' + document.getElementById('answers').rows[i].cells[7].childNodes[0].value;
+                    finalGrades += '&grade=' + document.getElementById('answers').rows[i].cells[3].childNodes[0].value;
+                    sending(finalGrades);
+                }
+            }
+            document.getElementById('gradesPosted').innerHTML = 'Grade submitted';
+        }
+
+        function graded() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/finalizeGrades.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+        }
+
+        #container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2b4f9cd5;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: rgb(78, 84, 87);
+        }
+
+        .active {
+            background-color: rgb(78, 84, 87);
+        }
+    </style>
+    <style>
+        table {
+            width: 100%;
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 15px;
+        }
+
+        th {
+            background-color: #2b4f9cd5;
+            color: white;
+            text-align: left;
+            border: 0.5px solid black;
+            border-collapse: collapse;
+            padding: 15px;
+        }
+
+        td {
+            color: black;
+            padding: 15px;
+            text-align: left;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #eee;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        input[type=number] {
+            width: 40px;
+        }
+    </style>
+    <style>
+        div button {
+            background-color: #2b4f9cd5;
+            border: none;
+            color: white;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: rgb(78, 84, 87);
+        }
+
+        textarea {
+            width: 100%;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="https://web.njit.edu/~aes38/teacher/home.html">Home</a></li>
+        <li><a href="https://web.njit.edu/~aes38/teacher/createTest.html">Tests</a></li>
+        <li><a href="#grading">Grading</a></li>
+        <li style="float:right"><a class="active" href="https://web.njit.edu/~aes38/index.html">Logout</a></li>
+    </ul>
+    <div id="container">
+        <button id="viewGrades" onclick="displayGrades();this.style.opacity='0.6';this.style.cursor= 'not-allowed';">View
+            active grades</button><br><br>
+        <table id="answers">
+            <tr>
+                <th>Question</th>
+                <th>Max points</th>
+                <th>Given answer</th>
+                <th>Total Points Received</th>
+                <th>Deducted points</th>
+                <th>Test cases</th>
+                <th>Your results</th>
+                <th>Teacher's comment</th>
+            </tr>
+        </table><br>
+        <div id="postGrade">
+            <p id="gradesPosted"></p>
+        </div>
+    </div>
+</body>
+
+</html>

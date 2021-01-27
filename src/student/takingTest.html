@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+        var numofQ = 0;
+        function testSubmitted() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/gradeTaken.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+        }
+        function getTest() {
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.open("POST", "https://web.njit.edu/~aes38/getTest.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var obj = JSON.parse(this.responseText);
+                    var count = 1;
+                    var test = '';
+                    for (var i in obj.questions) {
+                        test += count + '. ';
+                        test += '<label id="q' + i + '">' + obj.questions[i].question + '</label>';
+                        test += ' (' + obj.questions[i].points + ' points) <br>';
+                        test += '<textarea id="answer' + i + '" cols="50" rows="15"></textarea><br>';
+                        count++;
+                        numofQ++;
+                    }
+                    test += '<button onclick="sendAnswer();testSubmitted();">Submit test</button>';
+                    document.getElementById('takeTest').innerHTML = test;
+                }
+            };
+        }
+        function sending(params) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/sendAnswer.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send(params);
+        }
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        async function sendAnswer() {
+            var QandA = '';
+            for (var i = 0; i < numofQ; i++) {
+                QandA = '';
+                QandA += 'question=' + encodeURIComponent(document.getElementById('q' + i).innerHTML);
+                QandA += '&answer=' + encodeURIComponent(document.getElementById('answer' + i).value);
+                sending(QandA);
+                await sleep(500);
+            }
+            document.getElementById('takeTest').innerHTML = 'Test submitted';
+        }
+        function checkSubmission() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "https://web.njit.edu/~aes38/checkSubmission.php", true);
+            xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var obj = JSON.parse(this.responseText);
+                    if (obj == '0') {
+                        getTest();
+                    }
+                    if (obj == '1') {
+                        document.getElementById('takeTest').innerHTML = 'You have already attempted this test. Grade is unavailable until teacher approval';
+                    }
+                    if (obj == '2') {
+                        document.getElementById('takeTest').innerHTML = 'Your grade is available. You can view your grade under "check grade" tab';
+                    }
+                }
+            };
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2b4f9cd5;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: rgb(78, 84, 87);
+        }
+
+        .active {
+            background-color: rgb(78, 84, 87);
+        }
+    </style>
+    <style>
+        #container{
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px; 
+        }
+        div button {
+            background-color: #2b4f9cd5;
+            border: none;
+            color: white;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: rgb(78, 84, 87);
+        }
+        textarea{
+            width: 30%;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="https://web.njit.edu/~aes38/student/home.html">Home</a></li>
+        <li><a href="#takeTest">Take test</a></li>
+        <li><a href="https://web.njit.edu/~aes38/student/checkGrade.html">Check grade</a></li>
+        <li style="float:right"><a class="active" href="https://web.njit.edu/~aes38/index.html">Logout</a></li>
+    </ul>
+    <div id="container">
+        <button onclick="checkSubmission();this.style.display = 'none'">Begin
+            test</button>
+        <div id="takeTest"></div>
+        <p id="test"></p>
+    </div>
+</body>
+
+</html>
